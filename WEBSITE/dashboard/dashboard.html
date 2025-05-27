@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Futuristic Game Interface – Full Crypto Details</title>
+  <!-- Futuristic font -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* Global body styling */
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1b2735, #090a0f);
+      font-family: 'Orbitron', sans-serif;
+      color: #fff;
+    }
+
+    /* Main container */
+    .container {
+      width: 95%;
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* Player info box */
+    .player-info {
+      border: 2px solid #00FFDD;
+      padding: 20px;
+      margin-bottom: 30px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 255, 221, 0.5);
+    }
+
+    /* Header with player name and attributes */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .player-name {
+      font-size: 2em;
+      letter-spacing: 2px;
+      margin: 0;
+    }
+    .attributes {
+      display: flex;
+      gap: 10px;
+    }
+    .attributes div {
+      font-weight: bold;
+      padding: 0 8px;
+    }
+
+    /* HP Bar styling */
+    .hp-container {
+      margin-top: 20px;
+    }
+    .hp-container span {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    .hp-bar-wrapper {
+      margin-top: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      overflow: hidden;
+      height: 24px;
+    }
+    .hp-bar {
+      width: 70%;
+      background: linear-gradient(90deg, #ff4b1f, #ff9068);
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    /* Nickname banner with glowing animation */
+    .nickname {
+      background: linear-gradient(90deg, #00FFDD, #FF0099);
+      color: #000;
+      padding: 15px;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 1.6em;
+      font-weight: bold;
+      border-radius: 10px;
+      animation: glow 2s infinite alternate;
+      box-shadow: 0 0 15px rgba(0, 255, 221, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    @keyframes glow {
+      from {
+        box-shadow: 0 0 5px rgba(0, 255, 221, 0.8);
+      }
+      to {
+        box-shadow: 0 0 20px rgba(0, 255, 221, 1);
+      }
+    }
+    /* AI Nickname Button Styling */
+    #nickname-btn {
+      padding: 6px 12px;
+      font-size: 0.9em;
+      border: none;
+      background: #00FFDD;
+      color: #000;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #nickname-btn:hover {
+      background: #00cccc;
+    }
+
+    /* Sections container */
+    .sections {
+      position: relative;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      min-height: 300px;
+    }
+
+    /* Each interactive section */
+    .section {
+      flex: 1;
+      min-width: 250px;
+      border: 2px solid #00FFDD;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      transition: all 0.5s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Section label container */
+    .section-label {
+      z-index: 1;
+    }
+    /* Section hover effect */
+    .section:not(.fade-out):hover {
+      box-shadow: 0 0 20px rgba(0, 255, 221, 0.7);
+    }
+
+    /* Expanded section covers the entire viewport with plain black background */
+    .section.expanded {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+      border-radius: 0;
+      background: black;
+    }
+    /* Hide static label when expanded */
+    .section.expanded .section-label {
+      display: none;
+    }
+    /* Fade out non-active sections */
+    .section.fade-out {
+      opacity: 0.3;
+    }
+
+    /* Extra content inside each section */
+    .section .section-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      z-index: 2;
+      overflow-y: auto;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    /* Reveal content when expanded */
+    .section.expanded .section-content {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .section .section-content p {
+      margin: 10px;
+      text-align: center;
+      padding: 0 10px;
+    }
+
+    /* Table styling for crypto details */
+    .crypto-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .crypto-table th, 
+    .crypto-table td {
+      padding: 8px;
+      border: 1px solid #00FFDD;
+      text-align: center;
+    }
+    .crypto-table th {
+      background: #222;
+    }
+
+    /* Close button styling */
+    .close-btn {
+      padding: 6px 12px;
+      border: none;
+      background: #00FFDD;
+      color: #000;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+    .close-btn:hover {
+      background: #00cccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Player Information Section -->
+    <div class="player-info">
+      <div class="header">
+        <div class="player-name">PLAYER NAME</div>
+        <div class="attributes">
+          <div>*STR</div>
+          <div>*AGI</div>
+          <div>*INT</div>
+        </div>
+      </div>
+      <div class="hp-container">
+        <span>HP:</span>
+        <div class="hp-bar-wrapper">
+          <div class="hp-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal Nickname Banner with AI nickname generator -->
+    <div class="nickname">
+      <span id="nickname-text">PERSONAL NICKNAME</span>
+      <button id="nickname-btn">Generate AI Nickname</button>
+    </div>
+
+    <!-- Main Sections -->
+    <div class="sections">
+      <!-- CRYPTO Section (with full crypto details) -->
+      <div class="section" id="crypto">
+        <div class="section-label">CRYPTO</div>
+        <div class="section-content">
+          <p id="crypto-status">Crypto Details: Loading...</p>
+          <div id="crypto-data"></div>
+          <button class="close-btn">Close</button>
+        </div>
+      </div>
+
+      <!-- IN-GAME INVENTORY Section -->
+      <div class="section" id="inventory">
+        <div class="section-label">IN-GAME INVENTORY</div>
+        <div class="section-content">
+          <p>Inventory: Detailed inventory list goes here.</p>
+          <button class="close-btn">Close</button>
+        </div>
+      </div>
+
+      <!-- MARKET PLACE Section -->
+      <div class="section" id="marketplace">
+        <div class="section-label">MARKET PLACE</div>
+        <div class="section-content">
+          <p>Marketplace: Detailed marketplace info goes here.</p>
+          <button class="close-btn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Function to simulate AI-based nickname generation
+    function generateNickname() {
+      const nicknameText = document.getElementById("nickname-text");
+      nicknameText.textContent = "Generating...";
+      // Simulate asynchronous processing with a delay
+      setTimeout(() => {
+        const nicknames = [
+          "CyberSage",
+          "NeonOracle",
+          "QuantumPilot",
+          "BinaryWiz",
+          "DigitalMaverick",
+          "PixelGuru",
+          "DataNomad",
+          "CircuitShaman",
+          "TechnoProphet",
+          "SynthVisionary"
+        ];
+        const randomNickname =
+          nicknames[Math.floor(Math.random() * nicknames.length)];
+        nicknameText.textContent = randomNickname;
+      }, 1000);
+    }
+
+    // Attach event listener for the AI nickname button
+    document
+      .getElementById("nickname-btn")
+      .addEventListener("click", (e) => {
+        e.stopPropagation();
+        generateNickname();
+      });
+
+    // Function to fetch full crypto details from CoinGecko API
+    async function fetchFullCryptoDetails() {
+      // Fetch the top 10 cryptocurrencies by market cap
+      const apiUrl =
+        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false";
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        let content = `<table class="crypto-table">
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Price (USD)</th>
+            <th>Market Cap</th>
+            <th>Volume (24h)</th>
+            <th>24h Change (%)</th>
+          </tr>`;
+        data.forEach(coin => {
+          content += `<tr>
+            <td>${coin.market_cap_rank}</td>
+            <td>${coin.name} (${coin.symbol.toUpperCase()})</td>
+            <td>$${coin.current_price.toLocaleString()}</td>
+            <td>$${coin.market_cap.toLocaleString()}</td>
+            <td>$${coin.total_volume.toLocaleString()}</td>
+            <td>${coin.price_change_percentage_24h.toFixed(2)}%</td>
+          </tr>`;
+        });
+        content += `</table>`;
+        document.getElementById("crypto-data").innerHTML = content;
+        document.getElementById("crypto-status").innerText = "Crypto Details: Updated";
+      } catch (error) {
+        document.getElementById("crypto-status").innerText = "Crypto Details: Error loading data";
+        console.error("Error fetching full crypto details:", error);
+      }
+    }
+
+    // Expand section to full screen on click
+    document.querySelectorAll(".section").forEach((section) => {
+      section.addEventListener("click", function (e) {
+        if (e.target.classList.contains("close-btn")) return; // Ignore if close button clicked
+        if (section.classList.contains("expanded")) return; // Already expanded
+
+        // Remove expanded and fade-out classes from all sections
+        document.querySelectorAll(".section").forEach((s) => {
+          s.classList.remove("expanded", "fade-out");
+        });
+
+        // Expand the clicked section to cover the full viewport
+        section.classList.add("expanded");
+
+        // Fade out other sections
+        document.querySelectorAll(".section").forEach((s) => {
+          if (s !== section) {
+            s.classList.add("fade-out");
+          }
+        });
+
+        // If this is the CRYPTO section, fetch full crypto details
+        if (section.id === "crypto") {
+          fetchFullCryptoDetails();
+        }
+      });
+    });
+
+    // Close button resets the expanded view for all sections
+    document.querySelectorAll(".close-btn").forEach((button) => {
+      button.addEventListener("click", function (e) {
+        e.stopPropagation();
+        document.querySelectorAll(".section").forEach((s) => {
+          s.classList.remove("expanded", "fade-out");
+        });
+      });
+    });
+  </script>
+</body>
+</html>
