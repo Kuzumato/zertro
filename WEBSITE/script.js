@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const validPassword = "12345";
 
         if (username === validUsername && password === validPassword) {
-            window.location.href = "../dashboard/dashboard.html"; // Redirect to dashboard
+            window.location.href = "../dashboard.html"; // Redirect to dashboard
         } else {
             alert("Invalid username or password. Try again.");
         }
